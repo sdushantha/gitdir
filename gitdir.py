@@ -7,7 +7,7 @@ import signal
 import argparse
 
 # this ansii code lets us erase the current line
-ERASE_LINE = '\x1b[2K'
+ERASE_LINE = "\x1b[2K"
 
 
 def create_url(url):
@@ -16,11 +16,10 @@ def create_url(url):
 	we do a GET requests later in this script
 	"""
 	
-	api_url = url.replace("https://github.com", "https://api.github.com/repos")
-
 	# extract the branch name from the given url (e.g master)
-	branch = re.findall(r"\/tree\/(.*?)\/", api_url)[0]
-
+	branch = re.findall(r"\/tree\/(.*?)\/", url)[0]
+	
+	api_url = url.replace("https://github.com", "https://api.github.com/repos")
 	api_url = re.sub(r"\/tree\/.*?\/", "/contents/", api_url)
 		
 	api_url = api_url+"?ref="+branch
@@ -29,7 +28,7 @@ def create_url(url):
 
 
 def main():
-    # disbale CTRL+Z
+	# disbale CTRL+Z
 	signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
 	parser = argparse.ArgumentParser(description = "Download directories/folders from GitHub")
@@ -65,13 +64,13 @@ def main():
 			urllib.request.urlretrieve(file_url, path)
 
 			# bring the cursor to the beginning, erase the current line, and dont make a new line
-			print('\r'+ERASE_LINE, end='')
+			print("\r"+ERASE_LINE, end="")
 			print("\033[1;92m▶ Downloaded {}/{}: \033[0m{}".format(index+1, total_files, fname), end="", flush=True)
 		
 		except KeyboardInterrupt:
 		    # when CTRL+C is pressed during the execution of this script,
 			# bring the cursor to the beginning, erase the current line, and dont make a new line
-			print('\r'+ERASE_LINE, end='')
+			print("\r"+ERASE_LINE, end="")
 
 			# we are not doing index+1 in this line because when the user does CTRL+C, the file next file wont
 			# wont be downloaded and this line will show that it has downloaded 1 extra file than it really
@@ -82,7 +81,7 @@ def main():
 			print("\033[1;92m✔ Got interupted, but was able to download {} of {} files: \033[0m".format(index, total_files))
 			exit()
 	
-	print('\r'+ERASE_LINE, end='')
+	print("\r"+ERASE_LINE, end="")
 	print("\033[1;92m✔ Finished downloading {} file(s)\033[0m".format(total_files))
 
 
