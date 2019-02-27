@@ -15,8 +15,7 @@ def create_url(url):
 	modifying the given url so that it returns JSON data when
 	we do a GET requests later in this script
 	"""
-
-	api_url = url.split("/")[-1]
+	
 	api_url = url.replace("https://github.com", "https://api.github.com/repos")
 
 	# extract the branch name from the given url (e.g master)
