@@ -72,7 +72,14 @@ def main():
 		    # when CTRL+C is pressed during the execution of this script,
 			# bring the cursor to the beginning, erase the current line, and dont make a new line
 			print('\r'+ERASE_LINE, end='')
-			print("\033[1;94mExiting...\033[0m")
+
+			# we are not doing index+1 in this line because when the user does CTRL+C, the file next file wont
+			# wont be downloaded and this line will show that it has downloaded 1 extra file than it really
+			# has.
+			#
+			# lets say this script downloaded 4 files, the line below, would show that it had dowloaded
+			# 5 files IF there was index+1
+			print("\033[1;92m✔ Got interupted, but was able to download {} of {} files: \033[0m".format(index, total_files))
 			exit()
 	
 	print('\r'+ERASE_LINE, end='')
