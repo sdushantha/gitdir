@@ -1,5 +1,6 @@
 # gitdir
 > Download directories/folders from GitHub
+<p align="center"><img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif"><br></p>
 
 ## Install 
 ```bash
