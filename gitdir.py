@@ -6,7 +6,7 @@ import sys
 import signal
 import argparse
 
-# this ansii code lets us erase the current line
+# this ansi code lets us erase the current line
 ERASE_LINE = "\x1b[2K"
 
 
