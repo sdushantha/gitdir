@@ -9,9 +9,6 @@ $ git clone https://github.com/sdushantha/gitdir
 
 # change the working directory to gitdir
 $ cd gitdir
-
-# install the requirements
-$ pip3 install --user -r requirements.txt
 ```
 
 ## Usage
