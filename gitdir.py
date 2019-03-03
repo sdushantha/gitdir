@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import requests
 import re
 import os
 import urllib.request
 import sys
 import signal
 import argparse
+import json
 
 # this ansi code lets us erase the current line
 ERASE_LINE = "\x1b[2K"
@@ -23,7 +23,7 @@ def create_url(url):
 	
 	api_url = url.replace("https://github.com", "https://api.github.com/repos")
 	api_url = re.sub(r"\/tree\/.*?\/", "/contents/", api_url)
-		
+
 	api_url = api_url+"?ref="+branch
 
 	return api_url
@@ -45,8 +45,12 @@ def main():
 	# generate the url which returns the JSON data
 	api_url = create_url(repo_url)
 
-	r = requests.get(api_url)
-	data = r.json()
+	r = urllib.request.urlretrieve(api_url)
+    
+	with open(r[0], "r") as f:
+		raw_data = f.read()
+        
+	data = json.loads(raw_data)
 
 	# make a directory with the name which is taken from the 
 	# actual repo
@@ -68,7 +72,7 @@ def main():
 			# bring the cursor to the beginning, erase the current line, and dont make a new line
 			print("\r"+ERASE_LINE, end="")
 			print("\033[1;92m▶ Downloaded {}/{}: \033[0m{}".format(index+1, total_files, fname), end="", flush=True)
-		
+
 		except KeyboardInterrupt:
 		    # when CTRL+C is pressed during the execution of this script,
 			# bring the cursor to the beginning, erase the current line, and dont make a new line
@@ -82,7 +86,7 @@ def main():
 			# 5 files IF there was index+1
 			print("\033[1;92m✔ Got interupted, but was able to download {} of {} files: \033[0m".format(index, total_files))
 			exit()
-	
+
 	print("\r"+ERASE_LINE, end="")
 	print("\033[1;92m✔ Finished downloading {} file(s)\033[0m".format(total_files))
 
