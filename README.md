@@ -1,6 +1,13 @@
 # gitdir
-> Download directories/folders from GitHub
-<p align="center"><img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif"><br></p>
+
+- No external dependencies <img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif" align="right">
+- Minimal and colorful output 🌈
+- Works on **Linux** and **MacOS**
+- Less than **100 lines** of code (*including comments*)
+- Written by me 😉
+<br>
+<br>
+<br>
 
 ## Install 
 ```bash
