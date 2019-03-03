@@ -14,8 +14,7 @@
 # clone the repo
 $ git clone https://github.com/sdushantha/gitdir
 
-# change the working directory to gitdir
-$ cd gitdir
+# Yes, thats all :)
 ```
 
 ## Usage
