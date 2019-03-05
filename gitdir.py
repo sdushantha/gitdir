@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/python3
 import re
 import os
 import urllib.request
-import sys
 import signal
 import argparse
 import json
@@ -13,99 +11,108 @@ ERASE_LINE = "\x1b[2K"
 
 
 def create_url(url):
-	"""
-	modifying the given url so that it returns JSON data when
-	we do a GET requests later in this script
-	"""
+    """
+    modifying the given url so that it returns JSON data when
+    we do a GET requests later in this script
+    """
 
-	# extract the dirs name from the given url (e.g master)
-	download_dirs = re.findall(r"\/tree\/master\/(.*)", url)[0]
+    # extract the dirs name from the given url (e.g master)
+    download_dirs = re.findall(r"\/tree\/master\/(.*)", url)[0]
 
-	# extract the branch name from the given url (e.g master)
-	branch = re.findall(r"\/tree\/(.*?)\/", url)[0]
-	
-	api_url = url.replace("https://github.com", "https://api.github.com/repos")
-	api_url = re.sub(r"\/tree\/.*?\/", "/contents/", api_url)
+    # extract the branch name from the given url (e.g master)
+    branch = re.findall(r"\/tree\/(.*?)\/", url)[0]
 
-	api_url = api_url+"?ref="+branch
+    api_url = url.replace("https://github.com", "https://api.github.com/repos")
+    api_url = re.sub(r"\/tree\/.*?\/", "/contents/", api_url)
 
-	return (api_url, download_dirs)
+    api_url = api_url + "?ref=" + branch
+
+    return (api_url, download_dirs)
+
 
 def download(repo_url):
-	'''
-	recursive download
-	'''
+    '''
+    recursive download
+    '''
 
-	# generate the url which returns the JSON data
-	api_url, download_dirs = create_url(repo_url)
+    # generate the url which returns the JSON data
+    api_url, download_dirs = create_url(repo_url)
 
-	r = urllib.request.urlretrieve(api_url)
-    
-	# make a directory with the name which is taken from
-	# the actual repo
-	os.makedirs(download_dirs, exist_ok=True)
+    r = urllib.request.urlretrieve(api_url)
 
-	# total files count
-	total_files = 0
+    # make a directory with the name which is taken from
+    # the actual repo
+    os.makedirs(download_dirs, exist_ok=True)
 
-	with open(r[0], "r") as f:
-		raw_data = f.read()
-        
-		data = json.loads(raw_data)
+    # total files count
+    total_files = 0
 
-		# getting the total number of files so that we
-		# can use it for the output information later
-		total_files += len(data)
+    with open(r[0], "r") as f:
+        raw_data = f.read()
 
-		for index, file in enumerate(data):
-			file_url = file["download_url"]
-			fname = file["name"]
-			path = file["path"]
+        data = json.loads(raw_data)
 
-			if not file_url is None:
-				try:
-					# download the file
-					urllib.request.urlretrieve(file_url, path)
+        # getting the total number of files so that we
+        # can use it for the output information later
+        total_files += len(data)
 
-					# bring the cursor to the beginning, erase the current line, and dont make a new line
-					print("\r"+ERASE_LINE, end="")
-					print("\033[1;92m▶ Downloaded {}/{}: \033[0m{}".format(index+1, total_files, fname), end="", flush=True)
+        for index, file in enumerate(data):
+            file_url = file["download_url"]
+            fname = file["name"]
+            path = file["path"]
 
-				except KeyboardInterrupt:
-		    		# when CTRL+C is pressed during the execution of this script,
-					# bring the cursor to the beginning, erase the current line, and dont make a new line
-					print("\r"+ERASE_LINE, end="")
+            if not file_url is None:
+                try:
+                    # download the file
+                    urllib.request.urlretrieve(file_url, path)
 
-					# we are not doing index+1 in this line because when the user does CTRL+C, the file next file wont
-					# wont be downloaded and this line will show that it has downloaded 1 extra file than it really
-					# has.
-					#
-					# lets say this script downloaded 4 files, the line below, would show that it had dowloaded
-					# 5 files IF there was index+1
-					print("\033[1;92m✔ Got interupted, but was able to download {} of {} files: \033[0m".format(index, total_files))
-					exit()
-			else:
-				download(file["html_url"])
+                    # bring the cursor to the beginning, erase the current line, and dont make a new line
+                    print("\r" + ERASE_LINE, end="")
+                    print(
+                        "\033[1;92m▶ Downloaded {}/{}: \033[0m{}".format(
+                            index + 1, total_files, fname),
+                        end="",
+                        flush=True)
 
-	return total_files
+                except KeyboardInterrupt:
+                    # when CTRL+C is pressed during the execution of this script,
+                    # bring the cursor to the beginning, erase the current line, and dont make a new line
+                    print("\r" + ERASE_LINE, end="")
+
+                    # we are not doing index+1 in this line because when the user does CTRL+C, the file next file wont
+                    # wont be downloaded and this line will show that it has downloaded 1 extra file than it really
+                    # has.
+                    #
+                    # lets say this script downloaded 4 files, the line below, would show that it had dowloaded
+                    # 5 files IF there was index+1
+                    print(
+                        "\033[1;92m✔ Got interupted, but was able to download {} of {} files: \033[0m"
+                        .format(index, total_files))
+                    exit()
+            else:
+                download(file["html_url"])
+
+    return total_files
 
 
 def main():
-	# disbale CTRL+Z
-	signal.signal(signal.SIGTSTP, signal.SIG_IGN)
+    # disbale CTRL+Z
+    signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
-	parser = argparse.ArgumentParser(description = "Download directories/folders from GitHub")
-	parser.add_argument('url', action="store")
+    parser = argparse.ArgumentParser(
+        description="Download directories/folders from GitHub")
+    parser.add_argument('url', action="store")
 
-	args = parser.parse_args()
+    args = parser.parse_args()
 
-	repo_url = args.url
+    repo_url = args.url
 
-	total_files = download(repo_url)
+    total_files = download(repo_url)
 
-	print("\r"+ERASE_LINE, end="")
-	print("\033[1;92m✔ Finished downloading {} file(s)\033[0m".format(total_files))
+    print("\r" + ERASE_LINE, end="")
+    print("\033[1;92m✔ Finished downloading {} file(s)\033[0m".format(
+        total_files))
 
 
-if __name__=="__main__":
-	main()
+if __name__ == "__main__":
+    main()
