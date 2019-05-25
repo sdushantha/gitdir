@@ -5,13 +5,13 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='gitdir',
-    version='1.0',
+    version='1.1.1',
     author='Siddharth Dushantha',
     author_email='siddharth.dushantha@gmail.com',
     description='Download a single directory/folder from a GitHub repo',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/sdushantha/gitdir',
-    packages=setuptools.find_packages(),
+    py_modules=['gitdir'],
     scripts=['gitdir/gitdir']
 )
