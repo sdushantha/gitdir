@@ -3,7 +3,7 @@
 - No external dependencies <img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif" align="right">
 - Minimal and colorful output 🌈
 - Works on **Linux** and **MacOS**
-- Less than **100 lines** of code (*including comments*)
+- Only **4KB**
 - Written by me 😉
 <br>
 <br>
