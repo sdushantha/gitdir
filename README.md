@@ -13,7 +13,7 @@
 ## Install 
 ```bash
 # clone the repo
-$ git clone https://github.com/sdushantha/gitdir
+$ pip3 install --user gitdir
 
 # Yes, thats all :)
 ```
