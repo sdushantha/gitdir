@@ -12,7 +12,6 @@
 
 ## Install 
 ```bash
-# clone the repo
 $ pip3 install --user gitdir
 
 # Yes, thats all :)
