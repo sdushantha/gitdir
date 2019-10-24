@@ -1,2 +1,8 @@
 dist
 *.egg-info
+
+# jetbrains IDE files
+.idea
+
+# virtual environment
+venv/

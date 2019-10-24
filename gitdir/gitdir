@@ -16,21 +16,21 @@ def create_url(url):
     we do a GET requests later in this script
     """
 
-    # extract the dirs name from the given url (e.g master)
-    download_dirs = re.findall(r"\/tree\/master\/(.*)", url)[0]
-
     # extract the branch name from the given url (e.g master)
-    branch = re.findall(r"\/tree\/(.*?)\/", url)[0]
+    branch = re.findall(r"/tree/(.*?)/", url)[0]
+
+    # extract the dirs name from the given url (e.g master)
+    download_dirs = re.findall(r"/tree/" + branch + r"/(.*)", url)[0]
 
     api_url = url.replace("https://github.com", "https://api.github.com/repos")
-    api_url = re.sub(r"\/tree\/.*?\/", "/contents/", api_url)
+    api_url = re.sub(r"/tree/.*?/", "/contents/", api_url)
 
     api_url = api_url + "?ref=" + branch
 
     return (api_url, download_dirs)
 
 
-def download(repo_url):
+def download(repo_url, flatten):
     '''
     recursive download
     '''
@@ -40,9 +40,10 @@ def download(repo_url):
 
     r = urllib.request.urlretrieve(api_url)
 
-    # make a directory with the name which is taken from
-    # the actual repo
-    os.makedirs(download_dirs, exist_ok=True)
+    if not flatten:
+        # make a directory with the name which is taken from
+        # the actual repo
+        os.makedirs(download_dirs, exist_ok=True)
 
     # total files count
     total_files = 0
@@ -59,7 +60,11 @@ def download(repo_url):
         for index, file in enumerate(data):
             file_url = file["download_url"]
             fname = file["name"]
-            path = file["path"]
+
+            if flatten:
+                path = os.path.basename(file["path"])
+            else:
+                path = file["path"]
 
             if not file_url is None:
                 try:
@@ -68,7 +73,7 @@ def download(repo_url):
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print("\r" + ERASE_LINE, end="")
-                    print("\033[1;92m▶ Downloaded: \033[0m{}".format(fname),end="",flush=True)
+                    print("\033[1;92m▶ Downloaded: \033[0m{}".format(fname), end="", flush=True)
 
                 except KeyboardInterrupt:
                     # when CTRL+C is pressed during the execution of this script,
@@ -78,7 +83,7 @@ def download(repo_url):
                     print("\033[1;92m✔ Got interupted\033[0m")
                     exit()
             else:
-                download(file["html_url"])
+                download(file["html_url"], flatten)
 
     return total_files
 
@@ -90,11 +95,14 @@ def main():
     parser = argparse.ArgumentParser(description="Download directories/folders from GitHub")
     parser.add_argument('url', action="store")
 
+    parser.add_argument('--flatten', '-f', action="store_true", help='flatten directory structures')
+
     args = parser.parse_args()
 
     repo_url = args.url
+    flatten = args.flatten
 
-    total_files = download(repo_url)
+    total_files = download(repo_url, flatten)
 
     print("\r" + ERASE_LINE, end="")
     print("\033[1;92m✔ Download complete\033[0m")
@@ -102,4 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
