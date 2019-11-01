@@ -73,14 +73,14 @@ def download(repo_url, flatten):
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print("\r" + ERASE_LINE, end="")
-                    print("\033[1;92m▶ Downloaded: \033[0m{}".format(fname), end="", flush=True)
+                    print("\033[92mDownloaded: \033[0m{}".format(fname), end="", flush=True)
 
                 except KeyboardInterrupt:
                     # when CTRL+C is pressed during the execution of this script,
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print("\r" + ERASE_LINE, end="")
 
-                    print("\033[1;92m✔ Got interupted\033[0m")
+                    print("\033[91m✘ Got interupted\033[0m")
                     exit()
             else:
                 download(file["html_url"], flatten)
