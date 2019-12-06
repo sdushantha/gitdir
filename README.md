@@ -2,7 +2,7 @@
 
 - No external dependencies <img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif" align="right">
 - Minimal and colorful output 🌈
-- Works on **Linux** and **MacOS**
+- Works on **Linux**, **MacOS**, and **Windows**
 - Only **4KB**
 - Written by me 😉
 <br>
@@ -19,7 +19,7 @@ $ pip3 install --user gitdir
 
 ## Usage
 ```
-usage: gitdir.py [-h] url
+usage: gitdir [-h] [--flatten] url
 
 Download directories/folders from GitHub
 
@@ -27,8 +27,11 @@ positional arguments:
   url
 
 optional arguments:
-  -h, --help  show this help message and exit
+  -h, --help     show this help message and exit
+  --flatten, -f  Flatten directory structures. Do not create extra directory
+                 and download found files to current directory.
 ```
+
 **Exiting**
 
 To exit the program, just press ```CTRL+C```.
