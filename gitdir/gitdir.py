@@ -97,7 +97,9 @@ def main():
     parser = argparse.ArgumentParser(description="Download directories/folders from GitHub")
     parser.add_argument('url', action="store")
 
-    parser.add_argument('--flatten', '-f', action="store_true", help='flatten directory structures')
+    parser.add_argument('--flatten', '-f', action="store_true", help='Flatten directory structures. Do not create extra'
+                                                                     ' directory and download found files to current'
+                                                                     ' directory.')
 
     args = parser.parse_args()
 

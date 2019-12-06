@@ -12,10 +12,10 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/sdushantha/gitdir',
-    py_modules=['gitdir'],
+    packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'gitdir = gitdir.gitdir:main',
+            'gitdir = gitdir.__main__:main',
         ]
     }
 )
