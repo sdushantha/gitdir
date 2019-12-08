@@ -1,7 +1,6 @@
 # gitdir
 
-- No external dependencies <img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif" align="right">
-- Minimal and colorful output 🌈
+- Minimal and colorful output 🌈 <img src="https://media.giphy.com/media/9xghOCloQOsAfq9hUg/giphy.gif" align="right"h>
 - Works on **Linux**, **MacOS**, and **Windows**
 - Only **4KB**
 - Written by me 😉
