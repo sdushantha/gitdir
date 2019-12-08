@@ -6,6 +6,7 @@ import signal
 import argparse
 import json
 import sys
+from colorama import Fore, Style
 
 # this ANSI code lets us erase the current line
 ERASE_LINE = "\x1b[2K"
@@ -39,7 +40,16 @@ def download(repo_url, flatten):
     # generate the url which returns the JSON data
     api_url, download_dirs = create_url(repo_url)
 
-    r = urllib.request.urlretrieve(api_url)
+    try:
+        r = urllib.request.urlretrieve(api_url)
+
+    except KeyboardInterrupt:
+        # when CTRL+C is pressed during the execution of this script,
+        # bring the cursor to the beginning, erase the current line, and dont make a new line
+        print("\r" + ERASE_LINE, end="")
+
+        print(Fore.RED + "✘ Got interupted")
+        exit()
 
     if not flatten:
         # make a directory with the name which is taken from
@@ -74,14 +84,14 @@ def download(repo_url, flatten):
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print("\r" + ERASE_LINE, end="")
-                    print("\033[92mDownloaded: \033[0m{}".format(fname), end="", flush=True)
+                    print(Fore.GREEN + "Downloaded: " + Fore.WHITE + "{}".format(fname), end="", flush=True)
 
                 except KeyboardInterrupt:
                     # when CTRL+C is pressed during the execution of this script,
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print("\r" + ERASE_LINE, end="")
 
-                    print("\033[91m✘ Got interupted\033[0m")
+                    print(Fore.RED + "✘ Got interupted")
                     exit()
             else:
                 download(file["html_url"], flatten)
