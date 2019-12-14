@@ -6,10 +6,28 @@ import signal
 import argparse
 import json
 import sys
-from colorama import Fore, Style
+from colorama import Fore, Style, init
+
+init()
 
 # this ANSI code lets us erase the current line
 ERASE_LINE = "\x1b[2K"
+
+COLOR_NAME_TO_CODE = {"default": "", "red": Fore.RED, "green": Style.BRIGHT + Fore.GREEN}
+
+
+def print_text(text, color="default", in_place=False, **kwargs):  # type: (str, str, bool, any) -> None
+    """
+    print text to console, a wrapper to built-in print
+
+    :param text: text to print
+    :param color: can be one of "red" or "green", or "default"
+    :param in_place: whether to erase previous line and print in place
+    :param kwargs: other keywords passed to built-in print
+    """
+    if in_place:
+        print("\r" + ERASE_LINE, end="")
+    print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
 
 
 def create_url(url):
@@ -46,9 +64,7 @@ def download(repo_url, flatten):
     except KeyboardInterrupt:
         # when CTRL+C is pressed during the execution of this script,
         # bring the cursor to the beginning, erase the current line, and dont make a new line
-        print("\r" + ERASE_LINE, end="")
-
-        print(Fore.RED + "✘ Got interupted")
+        print_text("✘ Got interrupted", "red", in_place=True)
         exit()
 
     if not flatten:
@@ -83,15 +99,13 @@ def download(repo_url, flatten):
                     urllib.request.urlretrieve(file_url, path)
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
-                    print("\r" + ERASE_LINE, end="")
-                    print(Fore.GREEN + "Downloaded: " + Fore.WHITE + "{}".format(fname), end="", flush=True)
+                    print_text("Downloaded: " + Fore.WHITE + "{}".format(fname), "green", in_place=True, end="",
+                               flush=True)
 
                 except KeyboardInterrupt:
                     # when CTRL+C is pressed during the execution of this script,
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
-                    print("\r" + ERASE_LINE, end="")
-
-                    print(Fore.RED + "✘ Got interupted")
+                    print_text("✘ Got interrupted", 'red', in_place=True)
                     exit()
             else:
                 download(file["html_url"], flatten)
@@ -118,8 +132,7 @@ def main():
 
     total_files = download(repo_url, flatten)
 
-    print("\r" + ERASE_LINE, end="")
-    print("\033[1;92m✔ Download complete\033[0m")
+    print_text("✔ Download complete", "green", in_place=True)
 
 
 if __name__ == "__main__":
