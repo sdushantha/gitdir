@@ -92,7 +92,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         total_files += len(data)
 
         # If the data is a file, download it as one.
-        if data["type"] == "file":
+        if isinstance(data, dict) and data["type"] == "file":
             try:
                 # download the file
                 urllib.request.urlretrieve(data["download_url"], os.path.join(dir_out, data["name"]))
@@ -122,7 +122,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                     urllib.request.urlretrieve(file_url, path)
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
-                    print_text("Downloaded: " + Fore.WHITE + "{}".format(file_name), "green", in_place=False, end="",
+                    print_text("Downloaded: " + Fore.WHITE + "{}".format(file_name), "green", in_place=True,
                                flush=True)
 
                 except KeyboardInterrupt:
@@ -131,7 +131,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                     print_text("✘ Got interrupted", 'red', in_place=False)
                     exit()
             else:
-                download(file["html_url"], flatten, dir_out)
+                download(file["html_url"], flatten, path)
 
     return total_files
 
