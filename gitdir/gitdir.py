@@ -115,14 +115,15 @@ def download(repo_url, flatten=False, output_dir="./"):
             else:
                 path = file["path"]
 
-            path = os.path.join(dir_out, path)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+
             if file_url is not None:
                 try:
                     # download the file
                     urllib.request.urlretrieve(file_url, path)
 
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
-                    print_text("Downloaded: " + Fore.WHITE + "{}".format(file_name), "green", in_place=True,
+                    print_text("Downloaded: " + Fore.WHITE + "{}".format(file_name), "green", in_place=False, end="\n",
                                flush=True)
 
                 except KeyboardInterrupt:
@@ -131,7 +132,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                     print_text("✘ Got interrupted", 'red', in_place=False)
                     exit()
             else:
-                download(file["html_url"], flatten, path)
+                download(file["html_url"], flatten, dir_out)
 
     return total_files
 
