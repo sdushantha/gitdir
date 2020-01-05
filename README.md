@@ -31,6 +31,10 @@ optional arguments:
                  and download found files to current directory.
 ```
 
+## Packge Entry
+
+You can use `python -m gitdir` / `python3 -m gitdir` in case the short command does not work.
+
 **Exiting**
 
 To exit the program, just press ```CTRL+C```.
