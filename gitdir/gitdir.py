@@ -77,9 +77,7 @@ def download(repo_url, flatten=False, output_dir="./"):
     total_files = 0
 
     with open(response[0], "r") as f:
-        raw_data = f.read()
-
-        data = json.loads(raw_data)
+        data = json.load(f)
         # getting the total number of files so that we
         # can use it for the output information later
         total_files += len(data)
