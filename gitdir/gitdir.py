@@ -63,7 +63,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         if len(download_dirs.split(".")) == 0:
             dir_out = os.path.join(output_dir, download_dirs)
         else:
-            dir_out = os.path.join(output_dir, "/".join(download_dirs.split("/")[0:-1]))
+            dir_out = os.path.join(output_dir, "/".join(download_dirs.split("/")[:-1]))
     else:
         dir_out = output_dir
 
@@ -106,7 +106,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                 print_text("✘ Got interrupted", 'red', in_place=False)
                 exit()
 
-        for index, file in enumerate(data):
+        for file in data:
             file_url = file["download_url"]
             file_name = file["name"]
 
