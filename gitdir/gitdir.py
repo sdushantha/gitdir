@@ -30,24 +30,17 @@ def print_text(text, color="default", in_place=False, **kwargs):  # type: (str, 
     print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
 
 
+re_branch = re.compile("/(tree|blob)/(.+?)/")
 def create_url(url):
     """
     From the given url, produce a URL that is compatible with Github's REST API. Can handle blob or tree paths.
     """
 
     # extract the branch name from the given url (e.g master)
-    branch = re.findall(r"/tree/(.*?)/", url)
-    api_url = url.replace("https://github.com", "https://api.github.com/repos")
-    if len(branch) == 0:
-        branch = re.findall(r"/blob/(.*?)/", url)[0]
-        download_dirs = re.findall(r"/blob/" + branch + r"/(.*)", url)[0]
-        api_url = re.sub(r"/blob/.*?/", "/contents/", api_url)
-    else:
-        branch = branch[0]
-        download_dirs = re.findall(r"/tree/" + branch + r"/(.*)", url)[0]
-        api_url = re.sub(r"/tree/.*?/", "/contents/", api_url)
-
-    api_url = api_url + "?ref=" + branch
+    branch = re_branch.search(url)
+    download_dirs = url[branch.end():]
+    api_url = (url[:branch.start()].replace("github.com", "api.github.com/repos", 1) +
+              "/contents/" + download_dirs + "?ref=" + branch.group(2))
     return api_url, download_dirs
 
 
@@ -63,7 +56,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         if len(download_dirs.split(".")) == 0:
             dir_out = os.path.join(output_dir, download_dirs)
         else:
-            dir_out = os.path.join(output_dir, "/".join(download_dirs.split("/")[0:-1]))
+            dir_out = os.path.join(output_dir, "/".join(download_dirs.split("/")[:-1]))
     else:
         dir_out = output_dir
 
@@ -84,9 +77,7 @@ def download(repo_url, flatten=False, output_dir="./"):
     total_files = 0
 
     with open(response[0], "r") as f:
-        raw_data = f.read()
-
-        data = json.loads(raw_data)
+        data = json.load(f)
         # getting the total number of files so that we
         # can use it for the output information later
         total_files += len(data)
@@ -106,7 +97,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                 print_text("✘ Got interrupted", 'red', in_place=False)
                 exit()
 
-        for index, file in enumerate(data):
+        for file in data:
             file_url = file["download_url"]
             file_name = file["name"]
 
