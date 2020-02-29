@@ -30,24 +30,17 @@ def print_text(text, color="default", in_place=False, **kwargs):  # type: (str, 
     print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
 
 
+re_branch = re.compile("/(tree|blob)/(.+?)/")
 def create_url(url):
     """
     From the given url, produce a URL that is compatible with Github's REST API. Can handle blob or tree paths.
     """
 
     # extract the branch name from the given url (e.g master)
-    branch = re.findall(r"/tree/(.*?)/", url)
-    api_url = url.replace("https://github.com", "https://api.github.com/repos")
-    if len(branch) == 0:
-        branch = re.findall(r"/blob/(.*?)/", url)[0]
-        download_dirs = re.findall(r"/blob/" + branch + r"/(.*)", url)[0]
-        api_url = re.sub(r"/blob/.*?/", "/contents/", api_url)
-    else:
-        branch = branch[0]
-        download_dirs = re.findall(r"/tree/" + branch + r"/(.*)", url)[0]
-        api_url = re.sub(r"/tree/.*?/", "/contents/", api_url)
-
-    api_url = api_url + "?ref=" + branch
+    branch = re_branch.search(url)
+    download_dirs = url[branch.end():]
+    api_url = (url[:branch.start()].replace("github.com", "api.github.com/repos", 1) +
+              "/contents/" + download_dirs + "?ref=" + branch.group(2))
     return api_url, download_dirs
 
 
