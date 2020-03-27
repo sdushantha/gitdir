@@ -61,6 +61,9 @@ def download(repo_url, flatten=False, output_dir="./"):
         dir_out = output_dir
 
     try:
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+        urllib.request.install_opener(opener)
         response = urllib.request.urlretrieve(api_url)
     except KeyboardInterrupt:
         # when CTRL+C is pressed during the execution of this script,
@@ -86,6 +89,9 @@ def download(repo_url, flatten=False, output_dir="./"):
         if isinstance(data, dict) and data["type"] == "file":
             try:
                 # download the file
+                opener = urllib.request.build_opener()
+                opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+                urllib.request.install_opener(opener)
                 urllib.request.urlretrieve(data["download_url"], os.path.join(dir_out, data["name"]))
                 # bring the cursor to the beginning, erase the current line, and dont make a new line
                 print_text("Downloaded: " + Fore.WHITE + "{}".format(data["name"]), "green", in_place=True)
@@ -110,6 +116,9 @@ def download(repo_url, flatten=False, output_dir="./"):
 
             if file_url is not None:
                 try:
+                    opener = urllib.request.build_opener()
+                    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+                    urllib.request.install_opener(opener)
                     # download the file
                     urllib.request.urlretrieve(file_url, path)
 
