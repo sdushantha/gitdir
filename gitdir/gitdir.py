@@ -69,7 +69,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         # when CTRL+C is pressed during the execution of this script,
         # bring the cursor to the beginning, erase the current line, and dont make a new line
         print_text("✘ Got interrupted", "red", in_place=True)
-        exit()
+        sys.exit()
 
     if not flatten:
         # make a directory with the name which is taken from
@@ -101,7 +101,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                 # when CTRL+C is pressed during the execution of this script,
                 # bring the cursor to the beginning, erase the current line, and dont make a new line
                 print_text("✘ Got interrupted", 'red', in_place=False)
-                exit()
+                sys.exit()
 
         for file in data:
             file_url = file["download_url"]
@@ -130,7 +130,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                     # when CTRL+C is pressed during the execution of this script,
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print_text("✘ Got interrupted", 'red', in_place=False)
-                    exit()
+                    sys.exit()
             else:
                 download(file["html_url"], flatten, dir_out)
 
