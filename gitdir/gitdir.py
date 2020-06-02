@@ -111,8 +111,12 @@ def download(repo_url, flatten=False, output_dir="./"):
                 path = os.path.basename(file["path"])
             else:
                 path = file["path"]
+            dirname = os.path.dirname(path)
 
-            os.makedirs(os.path.dirname(path), exist_ok=True)
+            if dirname != '':
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+            else:
+                pass
 
             if file_url is not None:
                 try:
@@ -150,7 +154,7 @@ def main():
 
     parser.add_argument('--flatten', '-f', action="store_true",
                         help='Flatten directory structures. Do not create extra directory and download found files to'
-                             ' current directory.')
+                             ' output directory. (default to current directory if not specified)')
 
     args = parser.parse_args()
 
