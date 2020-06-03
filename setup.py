@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'gitdir = gitdir.__main__:main',
+            'gitdir = gitdir.gitdir:main',
         ]
     },
     install_requires=['colorama~=0.4']

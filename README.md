@@ -20,17 +20,22 @@ $ pip3 install --user gitdir
 
 ## Usage
 ```
-usage: gitdir [-h] [--flatten] url
+usage: gitdir [-h] [--output_dir OUTPUT_DIR] [--flatten] urls [urls ...]
 
 Download directories/folders from GitHub
 
 positional arguments:
-  url
+  urls                  List of Github directories to download.
 
 optional arguments:
-  -h, --help     show this help message and exit
-  --flatten, -f  Flatten directory structures. Do not create extra directory
-                 and download found files to current directory.
+  -h, --help            show this help message and exit
+  --output_dir OUTPUT_DIR, -d OUTPUT_DIR
+                        All directories will be downloaded to the specified
+                        directory.
+  --flatten, -f         Flatten directory structures. Do not create extra
+                        directory and download found files to output
+                        directory. (default to current directory if not
+                        specified)
 ```
 
 ## Packge Entry
