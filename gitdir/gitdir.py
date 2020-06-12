@@ -30,11 +30,19 @@ def print_text(text, color="default", in_place=False, **kwargs):  # type: (str, 
     print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
 
 
-re_branch = re.compile("/(tree|blob)/(.+?)/")
 def create_url(url):
     """
     From the given url, produce a URL that is compatible with Github's REST API. Can handle blob or tree paths.
     """
+    repo_only_url = re.compile(r"https:\/\/github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\/[a-zA-Z0-9]+")
+    re_branch = re.compile("/(tree|blob)/(.+?)/")
+
+    # Check if the given url is a url to a GitHub repo. If it is, tell the
+    # user to use 'git clone' to download it
+    if re.match(repo_only_url,url):
+        print_text("✘ The given url is a complete repository. Use 'git clone' to download the repository",
+                   "red", in_place=True)
+        sys.exit()
 
     # extract the branch name from the given url (e.g master)
     branch = re_branch.search(url)
