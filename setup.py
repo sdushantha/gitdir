@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='gitdir',
-    version='1.2.3',
+    version='1.2.4',
     author='Siddharth Dushantha',
     author_email='siddharth.dushantha@gmail.com',
     description='Download a single directory/folder from a GitHub repo',
