@@ -2,7 +2,8 @@
 
 - Minimal and colorful output 🌈 <img src="https://user-images.githubusercontent.com/27065646/71288165-9914bc80-236a-11ea-853b-a97bff999e79.gif" align="right">
 - Works on **Linux**, **MacOS**, and **Windows**
-
+<br>
+<br>
 <br>
 <br>
 <br>
