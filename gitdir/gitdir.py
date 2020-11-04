@@ -60,8 +60,8 @@ def create_url(url):
                 "/contents/" + download_dirs + "?ref=" + branch.group(2))
         return api_url, download_dirs.split('/')[-1]
     else:
-        print("Couldn't find the repo, Pls check the URL!!!")
-        return 
+        print_text("✘ Couldn't find the repo, Pls check the URL!!!", "red", in_place=True)
+        sys.exit()
 
 
 def download(repo_url, proxies, output_dir="./", flatten=False, exts=None, file_count=0):
@@ -196,12 +196,12 @@ def download(repo_url, proxies, output_dir="./", flatten=False, exts=None, file_
 
 def main():
 
-    def dir_path(string):
-        if os.path.isdir(string):
-            return string
-        else:
-            print_text("Please enter the correct output directory path!!!", "red", in_place=True)
-            sys.exit()
+    # def dir_path(string):
+    #     if os.path.isdir(string):
+    #         return string
+    #     else:
+    #         print_text("Please enter the correct output directory path!!!", "red", in_place=True)
+    #         sys.exit()
 
 
     parser = argparse.ArgumentParser(description="Download directories/folders from GitHub")
@@ -218,8 +218,6 @@ def main():
     parser.add_argument('--exts', '-e', nargs="+", dest='exts', default=None, help="List of File extensions which you want to download")
 
     args = parser.parse_args()
-
-
 
     flatten = args.flatten
     exts = args.exts
