@@ -29,7 +29,7 @@ def print_text(text, color="default", in_place=False, **kwargs):  # type: (str, 
     print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
 
 
-def get_proxy(proxies):
+def get_proxy(proxies=None):
     proxy = urllib.request.ProxyHandler({})
     if proxies is not None:
         option = 'http://' + random.choice(proxies)
@@ -64,7 +64,7 @@ def create_url(url):
         sys.exit()
 
 
-def download(repo_url, proxies, output_dir="./", flatten=False, exts=None, file_count=0):
+def download(repo_url, proxies=None, output_dir="./", flatten=False, exts=None, file_count=0):
     """ Downloads the files and directories in repo_url. If flatten is specified, the contents of any and all
      sub-directories will be pulled upwards into the root folder. """
 
