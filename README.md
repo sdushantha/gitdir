@@ -3,6 +3,7 @@
 - Minimal and colorful output 🌈 <img src="https://user-images.githubusercontent.com/27065646/71288165-9914bc80-236a-11ea-853b-a97bff999e79.gif" align="right">
 - Works on **Linux**, **MacOS**, and **Windows**
 - Support recursive downloading
+- Proxy support
 <br>
 <br>
 <br>
@@ -20,7 +21,7 @@ $ pip3 install --user gitdir
 
 ## Usage
 ```
-usage: gitdir [-h] [--output_dir OUTPUT_DIR] [--flatten] urls [urls ...]
+usage: gitdir [-h] [--output_dir OUTPUT_DIR] [--flatten] urls [urls ...] [--proxy Proxy txt file] [--exts File Extensions]
 
 Download directories/folders from GitHub
 
@@ -29,9 +30,15 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+
   --output_dir OUTPUT_DIR, -d OUTPUT_DIR
                         All directories will be downloaded to the specified
                         directory.
+
+  --exts, -e            List of File Extensions to download
+
+  --proxy, -p  		      path for file containing http proxies
+
   --flatten, -f         Flatten directory structures. Do not create extra
                         directory and download found files to output
                         directory. (default to current directory if not
@@ -45,6 +52,7 @@ You can use `python -m gitdir` / `python3 -m gitdir` in case the short command d
 **Exiting**
 
 To exit the program, just press ```CTRL+C```.
+
 
 ## License
 MIT License
