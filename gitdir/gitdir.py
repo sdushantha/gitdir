@@ -34,7 +34,7 @@ def create_url(url):
     """
     From the given url, produce a URL that is compatible with Github's REST API. Can handle blob or tree paths.
     """
-    repo_only_url = re.compile(r"https:\/\/github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\/[a-zA-Z0-9]+")
+    repo_only_url = re.compile(r"https:\/\/github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\/[a-zA-Z0-9]+$")
     re_branch = re.compile("/(tree|blob)/(.+?)/")
 
     # Check if the given url is a url to a GitHub repo. If it is, tell the
