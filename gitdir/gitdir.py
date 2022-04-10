@@ -114,11 +114,12 @@ def download(repo_url, flatten=False, output_dir="./"):
         for file in data:
             file_url = file["download_url"]
             file_name = file["name"]
+            file_path = os.path.join(dir_out, file["path"])
 
             if flatten:
-                path = os.path.basename(file["path"])
+                path = os.path.basename(file_path)
             else:
-                path = file["path"]
+                path = file_path
             dirname = os.path.dirname(path)
 
             if dirname != '':
