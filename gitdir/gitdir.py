@@ -114,7 +114,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         for file in data:
             file_url = file["download_url"]
             file_name = file["name"]
-            file_path = os.path.join(dir_out, file["path"])
+            file_path = file["path"]
 
             if flatten:
                 path = os.path.basename(file_path)
@@ -145,7 +145,7 @@ def download(repo_url, flatten=False, output_dir="./"):
                     print_text("✘ Got interrupted", 'red', in_place=False)
                     sys.exit()
             else:
-                download(file["html_url"], flatten, dir_out)
+                download(file["html_url"], flatten, download_dirs)
 
     return total_files
 
