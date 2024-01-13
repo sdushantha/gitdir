@@ -7,6 +7,7 @@ import argparse
 import json
 import sys
 from colorama import Fore, Style, init
+from pathlib import Path
 
 init()
 
@@ -17,7 +18,16 @@ COLOR_NAME_TO_CODE = {
     "default": "",
     "red": Fore.RED,
     "green": Style.BRIGHT + Fore.GREEN,
+    "yellow": Style.BRIGHT + Fore.YELLOW,
 }
+
+
+class FileToDownload:
+    def __init__(self, name, url, path, dest_path):
+        self.name = name
+        self.url = url
+        self.path = path
+        self.dest_path: Path = dest_path
 
 
 def print_text(text, color="default", in_place=False, **kwargs) -> None:
@@ -32,6 +42,32 @@ def print_text(text, color="default", in_place=False, **kwargs) -> None:
     if in_place:
         print("\r" + ERASE_LINE, end="")
     print(COLOR_NAME_TO_CODE[color] + text + Style.RESET_ALL, **kwargs)
+
+
+def prompt_yes_no(question: str, default: bool = True) -> bool:
+    """
+    Prompt user for a yes/no question.
+
+    :param question: question to ask
+    :param default: default answer if user just presses enter
+    :return: True if user answers yes, False if user answers no
+    """
+    if default:
+        yes_no = "Y/n"
+    else:
+        yes_no = "y/N"
+
+    while True:
+        print_text("{} [{}] ".format(question, yes_no), end="")
+        choice = input().lower()
+        if choice in {"y", "yes"}:
+            return True
+        elif choice in {"n", "no"}:
+            return False
+        elif choice == "":
+            return default
+        else:
+            print_text("Please respond with 'yes' or 'no' (or 'y' or 'n').")
 
 
 def create_url(url):
@@ -71,7 +107,42 @@ def create_url(url):
     return api_url, download_dirs
 
 
-def download(repo_url, flatten=False, output_dir="./"):
+def download_file(file_to_download: FileToDownload, force: bool) -> None:
+    if os.path.exists(file_to_download.dest_path) and not force:
+        if prompt_yes_no(
+            "✘ File {} already exists. Overwrite?".format(file_to_download.dest_path),
+            default=False,
+        ):
+            urllib.request.urlretrieve(file_to_download.url, file_to_download.dest_path)
+            # bring the cursor to the beginning, erase the current line, and dont make a new line
+            print_text(
+                "Downloading (overwriting): "
+                + Fore.WHITE
+                + "{} to {}".format(
+                    file_to_download.name, file_to_download.dest_path.resolve()
+                ),
+                "green",
+                in_place=True,
+            )
+        else:
+            print_text(
+                "Skipped: " + Fore.WHITE + "{}".format(file_to_download.name),
+                "yellow",
+                in_place=True,
+            )
+    else:
+        urllib.request.urlretrieve(file_to_download.url, file_to_download.dest_path)
+        # bring the cursor to the beginning, erase the current line, and dont make a new line
+        print_text(
+            "Downloaded: "
+            + Fore.WHITE
+            + "{} to {}".format(file_to_download.name, file_to_download.dest_path),
+            "green",
+            in_place=True,
+        )
+
+
+def download(repo_url, flatten=False, force=False, output_dir="./"):
     """Downloads the files and directories in repo_url. If flatten is specified, the contents of any and all
     sub-directories will be pulled upwards into the root folder."""
 
@@ -87,10 +158,9 @@ def download(repo_url, flatten=False, output_dir="./"):
     else:
         dir_out = output_dir
 
+    dir_out = Path(dir_out)
+
     try:
-        opener = urllib.request.build_opener()
-        opener.addheaders = [("User-agent", "Mozilla/5.0")]
-        urllib.request.install_opener(opener)
         response = urllib.request.urlretrieve(api_url)
     except KeyboardInterrupt:
         # when CTRL+C is pressed during the execution of this script,
@@ -99,8 +169,7 @@ def download(repo_url, flatten=False, output_dir="./"):
         sys.exit()
 
     if not flatten:
-        # make a directory with the name which is taken from
-        # the actual repo
+        # make a directory with the name which is taken from the actual repo
         os.makedirs(dir_out, exist_ok=True)
 
     # total files count
@@ -114,20 +183,17 @@ def download(repo_url, flatten=False, output_dir="./"):
 
         # If the data is a file, download it as one.
         if isinstance(data, dict) and data["type"] == "file":
+            print("Single file download")
             try:
                 # download the file
-                opener = urllib.request.build_opener()
-                opener.addheaders = [("User-agent", "Mozilla/5.0")]
-                urllib.request.install_opener(opener)
-                urllib.request.urlretrieve(
-                    data["download_url"], os.path.join(dir_out, data["name"])
+                dest_path = dir_out / Path(data["name"])
+                file_to_download = FileToDownload(
+                    name=data["name"],
+                    url=data["download_url"],
+                    dest_path=dest_path,
+                    path=data["path"],
                 )
-                # bring the cursor to the beginning, erase the current line, and dont make a new line
-                print_text(
-                    "Downloaded: " + Fore.WHITE + "{}".format(data["name"]),
-                    "green",
-                    in_place=True,
-                )
+                download_file(file_to_download, force)
 
                 return total_files
             except KeyboardInterrupt:
@@ -137,47 +203,46 @@ def download(repo_url, flatten=False, output_dir="./"):
                 sys.exit()
 
         for file in data:
-            file_url = file["download_url"]
-            file_name = file["name"]
             file_path = file["path"]
 
             if flatten:
-                path = os.path.basename(file_path)
+                path = Path(os.path.basename(file_path))
             else:
-                path = file_path
-            dirname = os.path.dirname(path)
+                path = Path(file_path)
 
-            if dirname != "":
-                os.makedirs(os.path.dirname(path), exist_ok=True)
+            file_to_download = FileToDownload(
+                name=file["name"],
+                url=file["download_url"],
+                dest_path=path,
+                path=file["path"],
+            )
+
+            if path.parent != "":
+                os.makedirs(path.parent, exist_ok=True)
             else:
                 pass
 
-            if file_url is not None:
+            if file_to_download.url is not None:
                 try:
-                    opener = urllib.request.build_opener()
-                    opener.addheaders = [("User-agent", "Mozilla/5.0")]
-                    urllib.request.install_opener(opener)
-                    # download the file
-                    urllib.request.urlretrieve(file_url, path)
-
-                    # bring the cursor to the beginning, erase the current line, and dont make a new line
-                    print_text(
-                        "Downloaded: " + Fore.WHITE + "{}".format(file_name),
-                        "green",
-                        in_place=False,
-                        end="\n",
-                        flush=True,
-                    )
-
+                    download_file(file_to_download, force)
                 except KeyboardInterrupt:
                     # when CTRL+C is pressed during the execution of this script,
                     # bring the cursor to the beginning, erase the current line, and dont make a new line
                     print_text("✘ Got interrupted", "red", in_place=False)
                     sys.exit()
             else:
-                download(file["html_url"], flatten, download_dirs)
+                download(file["html_url"], flatten, force, download_dirs)
 
     return total_files
+
+
+def set_up_url_opener():
+    """
+    Set up the URL opener to mimic a browser.
+    """
+    opener = urllib.request.build_opener()
+    opener.addheaders = [("User-agent", "Mozilla/5.0")]
+    urllib.request.install_opener(opener)
 
 
 def main():
@@ -207,11 +272,19 @@ def main():
         " output directory. (default to current directory if not specified)",
     )
 
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force overwriting existing files.",
+    )
+
     args = parser.parse_args()
+
+    set_up_url_opener()
 
     flatten = args.flatten
     for url in args.urls:
-        total_files = download(url, flatten, args.output_dir)
+        download(url, flatten, args.force, args.output_dir)
 
     print_text("✔ Download complete", "green", in_place=True)
 
