@@ -55,6 +55,11 @@ def create_url(url):
 
     # extract the branch name from the given url (e.g master)
     branch = re_branch.search(url)
+    if branch is None:
+        print_text(
+            "✘ Could not find branch name in the given url", "red", in_place=True
+        )
+        sys.exit()
     download_dirs = url[branch.end() :]
     api_url = (
         url[: branch.start()].replace("github.com", "api.github.com/repos", 1)
